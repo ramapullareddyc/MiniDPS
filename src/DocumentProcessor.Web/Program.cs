@@ -31,7 +31,7 @@ try
     }
     catch
     {
-        // Second: Try to get secret by description (SQL Server)
+        // Second: Try to get secret by description (PostgreSQL fallback)
         secretJson = await secretsService.GetSecretByDescriptionPrefixAsync("Password for RDS MSSQL used for MAM319.");
         if (!string.IsNullOrWhiteSpace(secretJson))
         {
@@ -39,7 +39,7 @@ try
             var password = secretsService.GetFieldFromSecret(secretJson, "password");
             var host = secretsService.GetFieldFromSecret(secretJson, "host");
             var port = secretsService.GetFieldFromSecret(secretJson, "port");
-            var dbname = secretsService.GetFieldFromSecret(secretJson, "dbname");
+            var dbname = "postgres";
             connectionString = $"Host={host};Port={port};Database={dbname};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
         }
         else throw new Exception("Failed to retrieve database credentials from Secrets Manager");
@@ -49,7 +49,7 @@ catch (Exception ex)
 {
     Console.WriteLine($"Warning: Could not load connection string from AWS Secrets Manager: {ex.Message}");
     Console.WriteLine("Falling back to appsettings.json connection string");
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Database=postgres;Username=postgres;Password=postgres;SSL Mode=Require;Trust Server Certificate=true";
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=;SSL Mode=Prefer;";
 }
 
 builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connectionString));

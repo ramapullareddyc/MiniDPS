@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DocumentProcessor.Web.Models;
 
@@ -9,7 +7,6 @@ public enum DocumentStatus { Pending, Processing, Processed, Failed }
 [Table("documents", Schema = "public")]
 public class Document
 {
-    [Key]
     [Column("id")]
     public Guid Id { get; set; }
     

@@ -1,20 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using DocumentProcessor.Web.Models;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace DocumentProcessor.Web.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    static AppDbContext()
-    {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-    }
-
     public DbSet<Document> Documents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
+        // Configure Document entity with PostgreSQL schema mappings
         mb.Entity<Document>(entity =>
         {
             // Apply table mapping with schema
@@ -31,10 +27,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.Summary).HasColumnName("summary");
             entity.Property(e => e.UploadedBy).HasColumnName("uploaded_by");
-            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
-            
-            // EF Core boolean to int conversion for PostgreSQL compatibility
-            entity.Property(e => e.IsDeleted).HasConversion<int>();
+            entity.Property(e => e.IsDeleted).HasColumnName("is_deleted").HasConversion<int>();
             
             // Preserve existing query filter
             entity.HasQueryFilter(d => !d.IsDeleted);
