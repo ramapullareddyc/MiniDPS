@@ -1,4 +1,4 @@
-using DocumentProcessor.Web.Components;
+﻿using DocumentProcessor.Web.Components;
 using DocumentProcessor.Web.Data;
 using DocumentProcessor.Web.Services;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +40,7 @@ try
             var host = secretsService.GetFieldFromSecret(secretJson, "host");
             var port = secretsService.GetFieldFromSecret(secretJson, "port");
             var dbname = secretsService.GetFieldFromSecret(secretJson, "dbname");
-            connectionString = $"Server={host},{port};Database={dbname};User Id={username};Password={password};TrustServerCertificate=true;Encrypt=true";
+            connectionString = $"Host={host};Port={port};Database={dbname};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
         }
         else throw new Exception("Failed to retrieve database credentials from Secrets Manager");
     }
@@ -49,10 +49,10 @@ catch (Exception ex)
 {
     Console.WriteLine($"Warning: Could not load connection string from AWS Secrets Manager: {ex.Message}");
     Console.WriteLine("Falling back to appsettings.json connection string");
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Server=localhost;Database=DocumentProcessor;Integrated Security=true;TrustServerCertificate=True;";
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Database=postgres;Username=postgres;Password=postgres;SSL Mode=Require;Trust Server Certificate=true";
 }
 
-builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connectionString));
 builder.Services.AddScoped<FileStorageService>();
 builder.Services.AddScoped<AIService>();
 builder.Services.AddScoped<DocumentProcessingService>();
