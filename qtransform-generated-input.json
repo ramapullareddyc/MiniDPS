@@ -1,0 +1,28 @@
+{
+  "Settings": {
+    "EnableRazorViews": false,
+    "ExcludePortNetStandard": false,
+    "EnableDbMod": true
+  },
+  "projects": [],
+  "DatabaseSettings": {
+    "ConnecterId": "a3191907-ab89-4bc6-9afe-1c4e0abb156e",
+    "Databases": [
+      {
+        "Source": {
+          "DatabaseName": "BobsUsedBookStore",
+          "DatabaseVersion": 2019
+        },
+        "Target": { "DatabaseName": "postgres", "DatabaseVersion": 13 },
+        "Tools": [
+          {
+            "Name": "DMS",
+            "Properties": {
+              "DmsArn": "arn:aws:dms:us-east-1:540187554381:migration-project:DBAGTKBFDJAUNCWR4DE3S4EECM"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

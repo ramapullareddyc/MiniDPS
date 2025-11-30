@@ -1,7 +1,8 @@
-using DocumentProcessor.Web.Components;
+﻿using DocumentProcessor.Web.Components;
 using DocumentProcessor.Web.Data;
 using DocumentProcessor.Web.Services;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,7 @@ catch (Exception ex)
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Server=localhost;Database=DocumentProcessor;Integrated Security=true;TrustServerCertificate=True;";
 }
 
-builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connectionString));
 builder.Services.AddScoped<FileStorageService>();
 builder.Services.AddScoped<AIService>();
 builder.Services.AddScoped<DocumentProcessingService>();
